@@ -94,4 +94,36 @@ public class Usuario {
     public String toString() {
         return "Usuario[ idUsuario=" + idUsuario + " ]";
     }
+    
+    // Local → SOAP
+    public static ec.edu.viajecito.client.Usuarios  toSoap(Usuario usuario) {
+        if (usuario == null) return null;
+
+        ec.edu.viajecito.client.Usuarios  soapUsuario = new ec.edu.viajecito.client.Usuarios ();
+        soapUsuario.setIdUsuario(usuario.getIdUsuario());
+        soapUsuario.setNombre(usuario.getNombre());
+        soapUsuario.setUsername(usuario.getUsername());
+        soapUsuario.setPassword(usuario.getPassword());
+        soapUsuario.setTelefono(usuario.getTelefono());
+        soapUsuario.setCedula(usuario.getCedula());
+        soapUsuario.setCorreo(usuario.getCorreo());
+
+        return soapUsuario;
+    }
+
+    // SOAP → Local
+    public static Usuario fromSoap(ec.edu.viajecito.client.Usuarios  soapUsuario) {
+        if (soapUsuario == null) return null;
+
+        Usuario usuario = new Usuario();
+        usuario.setIdUsuario(soapUsuario.getIdUsuario());
+        usuario.setNombre(soapUsuario.getNombre());
+        usuario.setUsername(soapUsuario.getUsername());
+        usuario.setPassword(soapUsuario.getPassword());
+        usuario.setTelefono(soapUsuario.getTelefono());
+        usuario.setCedula(soapUsuario.getCedula());
+        usuario.setCorreo(soapUsuario.getCorreo());
+
+        return usuario;
+    }
 }

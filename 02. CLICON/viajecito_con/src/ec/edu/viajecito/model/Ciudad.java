@@ -53,4 +53,28 @@ public class Ciudad {
     public void setNombreCiudad(String nombreCiudad) {
         this.nombreCiudad = nombreCiudad;
     }
+    
+    // Local → SOAP
+    public static ec.edu.viajecito.client.Ciudades toSoap(Ciudad local) {
+        if (local == null) return null;
+
+        ec.edu.viajecito.client.Ciudades soap = new ec.edu.viajecito.client.Ciudades();
+        soap.setIdCiudad(local.getIdCiudad());
+        soap.setCodigoCiudad(local.getCodigoCiudad());
+        soap.setNombreCiudad(local.getNombreCiudad());
+
+        return soap;
+    }
+
+    // SOAP → Local
+    public static Ciudad fromSoap(ec.edu.viajecito.client.Ciudades soap) {
+        if (soap == null) return null;
+
+        Ciudad local = new Ciudad();
+        local.setIdCiudad(soap.getIdCiudad());
+        local.setCodigoCiudad(soap.getCodigoCiudad());
+        local.setNombreCiudad(soap.getNombreCiudad());
+
+        return local;
+    }
 }

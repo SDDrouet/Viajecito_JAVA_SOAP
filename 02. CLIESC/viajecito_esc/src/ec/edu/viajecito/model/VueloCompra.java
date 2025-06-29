@@ -36,5 +36,25 @@ public class VueloCompra {
         this.cantidad = cantidad;
     }
     
-    
+     // Local → SOAP
+    public static ec.edu.viajecito.client.VueloCompra toSoap(VueloCompra local) {
+        if (local == null) return null;
+
+        ec.edu.viajecito.client.VueloCompra soap = new ec.edu.viajecito.client.VueloCompra();
+        soap.setIdVuelo(local.getIdVuelo());
+        soap.setCantidad(local.getCantidad());
+
+        return soap;
+    }
+
+    // SOAP → Local
+    public static VueloCompra fromSoap(ec.edu.viajecito.client.VueloCompra soap) {
+        if (soap == null) return null;
+
+        VueloCompra local = new VueloCompra();
+        local.setIdVuelo(soap.getIdVuelo());
+        local.setCantidad(soap.getCantidad());
+
+        return local;
+    }
 }

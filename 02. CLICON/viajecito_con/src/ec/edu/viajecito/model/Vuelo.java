@@ -8,6 +8,9 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  *
@@ -108,5 +111,58 @@ public class Vuelo {
 
     public void setCiudadDestino(Ciudad ciudadDestino) {
         this.ciudadDestino = ciudadDestino;
+    }
+    
+    // Local → SOAP
+    public static ec.edu.viajecito.client.Vuelos toSoap(Vuelo local) {
+        if (local == null) return null;
+
+        ec.edu.viajecito.client.Vuelos soap = new ec.edu.viajecito.client.Vuelos();
+        soap.setIdVuelo(local.getIdVuelo());
+        soap.setCodigoVuelo(local.getCodigoVuelo());
+        soap.setValor(local.getValor());
+        soap.setCapacidad(local.getCapacidad());
+        soap.setDisponibles(local.getDisponibles());
+
+        // horaSalida: Date → XMLGregorianCalendar
+        if (local.getHoraSalida() != null) {
+            try {
+                GregorianCalendar cal = new GregorianCalendar();
+                cal.setTime(local.getHoraSalida());
+                XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+                soap.setHoraSalida(xmlCal);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Relaciones
+        soap.setIdCiudadOrigen(Ciudad.toSoap(local.getCiudadOrigen()));
+        soap.setIdCiudadDestino(Ciudad.toSoap(local.getCiudadDestino()));
+
+        return soap;
+    }
+
+    // SOAP → Local
+    public static Vuelo fromSoap(ec.edu.viajecito.client.Vuelos soap) {
+        if (soap == null) return null;
+
+        Vuelo local = new Vuelo();
+        local.setIdVuelo(soap.getIdVuelo());
+        local.setCodigoVuelo(soap.getCodigoVuelo());
+        local.setValor(soap.getValor());
+        local.setCapacidad(soap.getCapacidad());
+        local.setDisponibles(soap.getDisponibles());
+
+        // horaSalida: XMLGregorianCalendar → Date
+        if (soap.getHoraSalida() != null) {
+            local.setHoraSalida(soap.getHoraSalida().toGregorianCalendar().getTime());
+        }
+
+        // Relaciones
+        local.setCiudadOrigen(Ciudad.fromSoap(soap.getIdCiudadOrigen()));
+        local.setCiudadDestino(Ciudad.fromSoap(soap.getIdCiudadDestino()));
+
+        return local;
     }
 }

@@ -4,6 +4,7 @@
  */
 package ec.edu.viajecito.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -68,6 +69,44 @@ public class CompraBoletoRequest {
         this.tasaInteresAnual = tasaInteresAnual;
     }
     
-    
+    // Local → SOAP
+    public static ec.edu.viajecito.client.CompraBoletoRequest toSoap(CompraBoletoRequest local) {
+        if (local == null) return null;
+
+        ec.edu.viajecito.client.CompraBoletoRequest soap = new ec.edu.viajecito.client.CompraBoletoRequest();
+        soap.setIdUsuario(local.getIdUsuario());
+        soap.setEsCredito(local.isEsCredito());
+        soap.setNumeroCuotas(local.getNumeroCuotas());
+        soap.setTasaInteresAnual(local.getTasaInteresAnual());
+
+        if (local.getVuelos() != null) {
+            for (VueloCompra vuelo : local.getVuelos()) {
+                soap.getVuelos().add(VueloCompra.toSoap(vuelo));
+            }
+        }
+
+        return soap;
+    }
+
+    // SOAP → Local
+    public static CompraBoletoRequest fromSoap(ec.edu.viajecito.client.CompraBoletoRequest soap) {
+        if (soap == null) return null;
+
+        CompraBoletoRequest local = new CompraBoletoRequest();
+        local.setIdUsuario(soap.getIdUsuario());
+        local.setEsCredito(soap.isEsCredito());
+        local.setNumeroCuotas(soap.getNumeroCuotas());
+        local.setTasaInteresAnual(soap.getTasaInteresAnual());
+
+        if (soap.getVuelos() != null) {
+            List<VueloCompra> vuelosLocal = new ArrayList<>();
+            for (ec.edu.viajecito.client.VueloCompra vueloSoap : soap.getVuelos()) {
+                vuelosLocal.add(VueloCompra.fromSoap(vueloSoap));
+            }
+            local.setVuelos(vuelosLocal);
+        }
+
+        return local;
+    }
 }
 

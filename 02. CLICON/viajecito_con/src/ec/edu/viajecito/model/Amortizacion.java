@@ -5,6 +5,8 @@
 package ec.edu.viajecito.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -78,6 +80,64 @@ public class Amortizacion {
         this.saldo = saldo;
     }
     
+    public static List<Amortizacion> calcularAmortizacion(double monto, int cuotas, double tasaAnual) {
+        List<Amortizacion> tabla = new ArrayList<>();
+
+        double tasaMensual = tasaAnual / 12.0 / 100.0;
+        double cuotaFija = monto * (tasaMensual / (1 - Math.pow(1 + tasaMensual, -cuotas)));
+
+        double saldo = monto;
+        double interesTotal = 0;
+
+        for (int i = 1; i <= cuotas; i++) {
+            double interes = saldo * tasaMensual;
+            double capital = cuotaFija - interes;
+            saldo -= capital;
+            interesTotal += interes;
+
+            Amortizacion fila = new Amortizacion();
+            fila.setIdAmortizacion(0); // Asigna 0 por defecto o un valor autogenerado si corresponde
+            fila.setNumeroCuota(i);
+            fila.setValorCuota(new BigDecimal(cuotaFija));
+            fila.setInteresPagado(new BigDecimal(interes));
+            fila.setCapitalPagado(new BigDecimal(capital));
+            fila.setSaldo(new BigDecimal(saldo));
+
+            tabla.add(fila);
+        }
+
+        return tabla;
+    }
     
-    
+    // Local → SOAP
+    public static ec.edu.viajecito.client.Amortizacion toSoap(Amortizacion local) {
+        if (local == null) return null;
+
+        ec.edu.viajecito.client.Amortizacion soap = new ec.edu.viajecito.client.Amortizacion();
+        soap.setIdAmortizacion(local.getIdAmortizacion());
+        soap.setNumeroCuota(local.getNumeroCuota());
+        soap.setValorCuota(local.getValorCuota());
+        soap.setInteresPagado(local.getInteresPagado());
+        soap.setCapitalPagado(local.getCapitalPagado());
+        soap.setSaldo(local.getSaldo());
+        // Campo idFactura no se mapea porque no está en la clase local
+
+        return soap;
+    }
+
+    // SOAP → Local
+    public static Amortizacion fromSoap(ec.edu.viajecito.client.Amortizacion soap) {
+        if (soap == null) return null;
+
+        Amortizacion local = new Amortizacion();
+        local.setIdAmortizacion(soap.getIdAmortizacion());
+        local.setNumeroCuota(soap.getNumeroCuota());
+        local.setValorCuota(soap.getValorCuota());
+        local.setInteresPagado(soap.getInteresPagado());
+        local.setCapitalPagado(soap.getCapitalPagado());
+        local.setSaldo(soap.getSaldo());
+        // Campo idFactura se ignora igualmente
+
+        return local;
+    }
 }

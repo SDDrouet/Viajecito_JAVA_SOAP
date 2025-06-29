@@ -109,4 +109,35 @@ public class Amortizacion {
         return tabla;
     }
     
+    // Local → SOAP
+    public static ec.edu.viajecito.client.Amortizacion toSoap(Amortizacion local) {
+        if (local == null) return null;
+
+        ec.edu.viajecito.client.Amortizacion soap = new ec.edu.viajecito.client.Amortizacion();
+        soap.setIdAmortizacion(local.getIdAmortizacion());
+        soap.setNumeroCuota(local.getNumeroCuota());
+        soap.setValorCuota(local.getValorCuota());
+        soap.setInteresPagado(local.getInteresPagado());
+        soap.setCapitalPagado(local.getCapitalPagado());
+        soap.setSaldo(local.getSaldo());
+        // Campo idFactura no se mapea porque no está en la clase local
+
+        return soap;
+    }
+
+    // SOAP → Local
+    public static Amortizacion fromSoap(ec.edu.viajecito.client.Amortizacion soap) {
+        if (soap == null) return null;
+
+        Amortizacion local = new Amortizacion();
+        local.setIdAmortizacion(soap.getIdAmortizacion());
+        local.setNumeroCuota(soap.getNumeroCuota());
+        local.setValorCuota(soap.getValorCuota());
+        local.setInteresPagado(soap.getInteresPagado());
+        local.setCapitalPagado(soap.getCapitalPagado());
+        local.setSaldo(soap.getSaldo());
+        // Campo idFactura se ignora igualmente
+
+        return local;
+    }
 }

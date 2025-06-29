@@ -4,12 +4,15 @@
  */
 package ec.edu.viajecito.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  *
@@ -120,6 +123,83 @@ public class Factura {
         this.fechaFactura = fechaFactura;
     }
     
-    
+    // Local → SOAP
+    public static ec.edu.viajecito.client.Facturas toSoap(Factura local) {
+        if (local == null) return null;
+
+        ec.edu.viajecito.client.Facturas soap = new ec.edu.viajecito.client.Facturas();
+        soap.setIdFactura(local.getIdFactura());
+        soap.setNumeroFactura(local.getNumeroFactura());
+        soap.setPrecioSinIva(local.getPrecioSinIva());
+        soap.setPrecioConIva(local.getPrecioConIva());
+        soap.setIdUsuario(Usuario.toSoap(local.getIdUsuario()));
+
+        // Convertir fecha a XMLGregorianCalendar
+        try {
+            if (local.getFechaFactura() != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date parsedDate = sdf.parse(local.getFechaFactura().toString());
+                GregorianCalendar cal = new GregorianCalendar();
+                cal.setTime(parsedDate);
+                XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+                soap.setFechaFactura(xmlCal);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Lista de boletos
+        if (local.getBoletosCollection() != null) {
+            for (Boleto b : local.getBoletosCollection()) {
+                soap.getBoletosCollection().add(Boleto.toSoap(b));
+            }
+        }
+
+        // Lista de amortizaciones
+        if (local.getAmortizacionBoletosCollection() != null) {
+            for (Amortizacion a : local.getAmortizacionBoletosCollection()) {
+                soap.getAmortizacionBoletosCollection().add(Amortizacion.toSoap(a));
+            }
+        }
+
+        return soap;
+    }
+
+    // SOAP → Local
+    public static Factura fromSoap(ec.edu.viajecito.client.Facturas soap) {
+        if (soap == null) return null;
+
+        Factura local = new Factura();
+        local.setIdFactura(soap.getIdFactura());
+        local.setNumeroFactura(soap.getNumeroFactura());
+        local.setPrecioSinIva(soap.getPrecioSinIva());
+        local.setPrecioConIva(soap.getPrecioConIva());
+        local.setIdUsuario(Usuario.fromSoap(soap.getIdUsuario()));
+
+        // Convertir fecha a String
+        if (soap.getFechaFactura() != null) {
+            local.setFechaFactura(soap.getFechaFactura().toGregorianCalendar().getTime().toInstant().toString());
+        }
+
+        // Lista de boletos
+        if (soap.getBoletosCollection() != null) {
+            Collection<Boleto> boletos = new ArrayList<>();
+            for (ec.edu.viajecito.client.Boletos b : soap.getBoletosCollection()) {
+                boletos.add(Boleto.fromSoap(b));
+            }
+            local.setBoletosCollection(boletos);
+        }
+
+        // Lista de amortizaciones
+        if (soap.getAmortizacionBoletosCollection() != null) {
+            Collection<Amortizacion> amortizaciones = new ArrayList<>();
+            for (ec.edu.viajecito.client.Amortizacion a : soap.getAmortizacionBoletosCollection()) {
+                amortizaciones.add(Amortizacion.fromSoap(a));
+            }
+            local.setAmortizacionBoletosCollection(amortizaciones);
+        }
+
+        return local;
+    }
     
 }
