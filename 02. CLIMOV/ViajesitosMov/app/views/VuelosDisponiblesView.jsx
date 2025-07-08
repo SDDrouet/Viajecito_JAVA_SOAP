@@ -75,7 +75,7 @@ export default function VuelosDisponiblesView() {
         });
 
         const ordenados = vuelosCompletos.sort(
-          (a, b) => new Date(b.HoraSalida) - new Date(a.HoraSalida)
+          (a, b) => a.IdVuelo - b.IdVuelo
         );
 
         setVuelos(ordenados);
