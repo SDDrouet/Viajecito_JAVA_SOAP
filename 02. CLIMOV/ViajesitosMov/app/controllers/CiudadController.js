@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { XMLParser } from 'fast-xml-parser';
 
-const SOAP_URL = 'http://localhost:8080/aero_condor_java_soap/AeroCondorController';
+const SOAP_URL = 'http://10.69.99.199:8080/aero_condor_java_soap/AeroCondorController';
 const parser = new XMLParser({ 
   ignoreAttributes: false,
   removeNSPrefix: true
