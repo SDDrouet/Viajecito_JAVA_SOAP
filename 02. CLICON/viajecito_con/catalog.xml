@@ -2,4 +2,8 @@
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
     <system systemId="http://localhost:8080/aero_condor_java_soap/AeroCondorController?wsdl" uri="xml-resources/web-service-references/AeroCondorController/wsdl/localhost_8080/aero_condor_java_soap/AeroCondorController.wsdl"/>
     <system systemId="http://localhost:8080/aero_condor_java_soap/AeroCondorController?xsd=1" uri="xml-resources/web-service-references/AeroCondorController/wsdl/localhost_8080/aero_condor_java_soap/AeroCondorController.xsd_1.xsd"/>
+    <system systemId="http://192.168.137.182:8080/aero_condor_java_soap/AeroCondorController?wsdl" uri="xml-resources/web-service-references/AeroCondorController/wsdl/192.168.137.182_8080/aero_condor_java_soap/AeroCondorController.wsdl"/>
+    <system systemId="http://192.168.137.182:8080/aero_condor_java_soap/AeroCondorController?xsd=1" uri="xml-resources/web-service-references/AeroCondorController/wsdl/192.168.137.182_8080/aero_condor_java_soap/AeroCondorController.xsd_1.xsd"/>
+    <system systemId="http://10.69.99.199:8080/aero_condor_java_soap/AeroCondorController?wsdl" uri="xml-resources/web-service-references/AeroCondorController/wsdl/10.69.99.199_8080/aero_condor_java_soap/AeroCondorController.wsdl"/>
+    <system systemId="http://10.69.99.199:8080/aero_condor_java_soap/AeroCondorController?xsd=1" uri="xml-resources/web-service-references/AeroCondorController/wsdl/10.69.99.199_8080/aero_condor_java_soap/AeroCondorController.xsd_1.xsd"/>
 </catalog>

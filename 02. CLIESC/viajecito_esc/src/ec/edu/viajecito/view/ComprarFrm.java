@@ -17,6 +17,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,7 +47,6 @@ public class ComprarFrm extends javax.swing.JFrame {
     private List<VueloCompra> vuelosComprar;
     private List<Vuelo> vuelosAgregados;
 
-    
     /**
      * Creates new form LoginFrm
      */
@@ -59,7 +60,7 @@ public class ComprarFrm extends javax.swing.JFrame {
         spnNumBoletos.setModel(model1);
         cargarCiudadesEnCombo();
         cargarCombos();
-        
+
         this.usuario = usuario1;
         vuelos = new ArrayList<>();
         this.vuelosComprar = new ArrayList<>();
@@ -68,15 +69,15 @@ public class ComprarFrm extends javax.swing.JFrame {
         configTable();
 
     }
-    
+
     private void configTable() {
         DefaultTableModel modeloTabla = new DefaultTableModel(new Object[]{"Vuelo", "Detalle", "Precio Unit", "Cantidad"}, 0) {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return column == 3; // Solo cantidad editable
-                }
-            };
-        
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 3; // Solo cantidad editable
+            }
+        };
+
         tblVuelos.setModel(modeloTabla);
 
         // Listener para detectar cambios en la cantidad
@@ -88,7 +89,7 @@ public class ComprarFrm extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void tableStyle() {
         // Cambiar fuente
         tblVuelos.setFont(new Font("Maiandra GD", Font.PLAIN, 14));
@@ -99,25 +100,25 @@ public class ComprarFrm extends javax.swing.JFrame {
         // Cambiar color de fondo y texto de las filas
         tblVuelos.setBackground(Color.WHITE);
         tblVuelos.setForeground(Color.BLACK);
-        
+
         tblVuelos.setFillsViewportHeight(true);
 
         // Cambiar colores de encabezado
-        JTableHeader header = tblVuelos.getTableHeader();        
+        JTableHeader header = tblVuelos.getTableHeader();
         header.setDefaultRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                                                           boolean hasFocus, int row, int column) {
+                    boolean hasFocus, int row, int column) {
                 JLabel label = new JLabel(value.toString());
                 label.setOpaque(true);
                 label.setFont(new Font("Maiandra GD", Font.BOLD, 14));
-                label.setBackground(new Color(60,59,46));
-                label.setForeground(Color.WHITE);                
+                label.setBackground(new Color(60, 59, 46));
+                label.setForeground(Color.WHITE);
                 label.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230)));
                 label.setHorizontalAlignment(SwingConstants.CENTER);
                 return label;
             }
-        });      
+        });
 
         // Bordes
         tblVuelos.setShowHorizontalLines(true);
@@ -142,7 +143,7 @@ public class ComprarFrm extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void cargarCiudadesEnCombo() {
         ciudades = new CiudadesController().obtenerTodasCiudades();
         cmbOrigen.removeAllItems();
@@ -153,33 +154,33 @@ public class ComprarFrm extends javax.swing.JFrame {
             cmbDestino.addItem(c.getCodigoCiudad() + " - " + c.getNombreCiudad());
         }
     }
-    
+
     private void cargarCombos() {
         cmbTipoPago.removeAllItems();
         cmbCuotas.removeAllItems();
-        
+
         cmbTipoPago.addItem("Contado");
         cmbTipoPago.addItem("Diferido");
-        
+
         cmbCuotas.addItem("3 meses");
         cmbCuotas.addItem("6 meses");
         cmbCuotas.addItem("12 meses");
         cmbCuotas.addItem("15 meses");
     }
-    
+
     public boolean esPagoDiferido() {
         String seleccionado = (String) cmbTipoPago.getSelectedItem();
         return !"Contado".equals(seleccionado);
     }
-    
+
     public int obtenerMesesCuota() {
         String seleccionado = (String) cmbCuotas.getSelectedItem(); // e.g. "6 meses"
         // Separa por espacio y convierte la primera parte a entero
-        
-        if(!esPagoDiferido()) {
+
+        if (!esPagoDiferido()) {
             return 0;
         }
-        
+
         try {
             String partes[] = seleccionado.split("\\s+");
             return Integer.parseInt(partes[0]);
@@ -188,14 +189,13 @@ public class ComprarFrm extends javax.swing.JFrame {
             return 0;
         }
     }
-    
+
     public double obtenerInteres() {
-        if(!esPagoDiferido()) {
+        if (!esPagoDiferido()) {
             return 0;
         }
         return 16.5;
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -582,47 +582,46 @@ public class ComprarFrm extends javax.swing.JFrame {
         for (int i = 0; i < vuelosComprar.size(); i++) {
             VueloCompra vc = vuelosComprar.get(i);
             Vuelo vuelo = vuelosAgregados.get(i); // Ya no necesitas buscar
-            
-            
+
             double precioParcial = vuelo.getValor().doubleValue() * vc.getCantidad();
             total += precioParcial;
 
             resumen.append("- ").append(vuelo.getCodigoVuelo())
-                   .append(" | De ").append(vuelo.getCiudadOrigen().getNombreCiudad())
-                   .append(" a ").append(vuelo.getCiudadDestino().getNombreCiudad())
-                   .append(" | Cantidad: ").append(vc.getCantidad())
-                   .append(" | Total: ").append(precioParcial).append(" $\n");
+                    .append(" | De ").append(vuelo.getCiudadOrigen().getNombreCiudad())
+                    .append(" a ").append(vuelo.getCiudadDestino().getNombreCiudad())
+                    .append(" | Cantidad: ").append(vc.getCantidad())
+                    .append(" | Total: ").append(precioParcial).append(" $\n");
         }
-                
+
         String txtCuotas = "";
         double totalIva = total * 1.15;
         if (esPagoDiferido()) {
             List<Amortizacion> amortizacions = Amortizacion.calcularAmortizacion(totalIva, obtenerMesesCuota(), obtenerInteres());
             totalIva = obtenerMesesCuota() * amortizacions.get(0).getValorCuota().doubleValue();
             double totalInteres = 0;
-            for(Amortizacion amortizacion : amortizacions) {
+            for (Amortizacion amortizacion : amortizacions) {
                 totalInteres += amortizacion.getInteresPagado().doubleValue();
-            }            
-            
-            txtCuotas = "Cuotas: " + (String) cmbCuotas.getSelectedItem() + "\n" +
-                    "Cuotas Mensuales: " + String.format("%.2f", amortizacions.get(0).getValorCuota()) + "$\n" + 
-                    "Total interes: " + String.format("%.2f", totalInteres) + "$\n";
-            
+            }
+
+            txtCuotas = "Cuotas: " + (String) cmbCuotas.getSelectedItem() + "\n"
+                    + "Cuotas Mensuales: " + String.format("%.2f", amortizacions.get(0).getValorCuota()) + "$\n"
+                    + "Total interes: " + String.format("%.2f", totalInteres) + "$\n";
+
         }
 
         int opcion = JOptionPane.showOptionDialog(
-            this,
-            "¿Está seguro que desea realizar la compra?\n" +
-            "Vuelos a comprar:\n" + resumen.toString() +
-            "Tipo de Pago: " + (String) cmbTipoPago.getSelectedItem() + "\n" +
-            txtCuotas +
-            "TOTAL (Inc Iva): " + String.format("%.2f", totalIva) + "$",
-            "Confirmar compra",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE,
-            null,
-            new Object[]{"Confirmar", "Cancelar"},
-            "Confirmar"
+                this,
+                "¿Está seguro que desea realizar la compra?\n"
+                + "Vuelos a comprar:\n" + resumen.toString()
+                + "Tipo de Pago: " + (String) cmbTipoPago.getSelectedItem() + "\n"
+                + txtCuotas
+                + "TOTAL (Inc Iva): " + String.format("%.2f", totalIva) + "$",
+                "Confirmar compra",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[]{"Confirmar", "Cancelar"},
+                "Confirmar"
         );
 
         if (opcion == JOptionPane.YES_OPTION) {
@@ -649,10 +648,10 @@ public class ComprarFrm extends javax.swing.JFrame {
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         String origen = ciudades.get(cmbOrigen.getSelectedIndex()).getCodigoCiudad();
         String destino = ciudades.get(cmbDestino.getSelectedIndex()).getCodigoCiudad();
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String horaSalida = sdf.format((Date) spinDate.getValue());
-        
+
         vuelos = new VuelosController().obtenerVuelosPorCiudad(origen, destino, horaSalida);
         cmbVuelos.removeAllItems();
 
@@ -699,6 +698,19 @@ public class ComprarFrm extends javax.swing.JFrame {
         for (VueloCompra vc : vuelosComprar) {
             if (vc.getIdVuelo() == vuelo.getIdVuelo()) {
                 JOptionPane.showMessageDialog(this, "Este vuelo ya fue añadido.");
+                return;
+            }
+        }
+
+        for (Vuelo vuelorow : vuelosAgregados) {
+            LocalDate fechaExistente = vuelorow.getHoraSalida().toInstant()
+                    .atZone(ZoneId.systemDefault()).toLocalDate();
+
+            LocalDate fechaNuevoVuelo = vuelo.getHoraSalida().toInstant()
+                    .atZone(ZoneId.systemDefault()).toLocalDate();
+
+            if (fechaExistente.equals(fechaNuevoVuelo)) {
+                JOptionPane.showMessageDialog(this, "No se puede añadir otro vuelo el mismo día. Elija una fecha diferente.");
                 return;
             }
         }

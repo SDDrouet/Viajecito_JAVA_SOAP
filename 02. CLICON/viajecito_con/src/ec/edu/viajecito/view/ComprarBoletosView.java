@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 public class ComprarBoletosView {
@@ -33,6 +35,7 @@ public class ComprarBoletosView {
         }
 
         List<VueloCompra> listaVuelos = new ArrayList<>();
+        List<Vuelo> vuelosAgregados = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;
 
         do {
@@ -52,12 +55,33 @@ public class ComprarBoletosView {
             int vueloIdx = pedirIndiceVuelo(vuelos);
             Vuelo vueloSeleccionado = vuelos.get(vueloIdx);
 
+            boolean vueloYaAgregado = false;
+
+            for (Vuelo vuelorow : vuelosAgregados) {
+                LocalDate fechaExistente = vuelorow.getHoraSalida().toInstant()
+                        .atZone(ZoneId.systemDefault()).toLocalDate();
+
+                LocalDate fechaNuevoVuelo = vueloSeleccionado.getHoraSalida().toInstant()
+                        .atZone(ZoneId.systemDefault()).toLocalDate();
+
+                if (fechaExistente.equals(fechaNuevoVuelo)) {
+                    System.out.println("No se puede agregar otro vuelo en la misma fecha.");
+                    vueloYaAgregado = true;
+                    break; // salta del for, pero no del do-while
+                }
+            }
+
+            if (vueloYaAgregado) {
+                continue; // salta al siguiente ciclo del do-while
+            }
+
             int cantidad = pedirCantidadBoletos(vueloSeleccionado);
 
             BigDecimal subtotal = vueloSeleccionado.getValor().multiply(BigDecimal.valueOf(cantidad));
             total = total.add(subtotal);
 
             listaVuelos.add(new VueloCompra(vueloSeleccionado.getIdVuelo(), cantidad));
+            vuelosAgregados.add(vueloSeleccionado);
 
             System.out.printf("Subtotal actual (sin IVA): $%.2f\n", total);
 
@@ -117,7 +141,9 @@ public class ComprarBoletosView {
         while (idx < 0 || idx >= ciudades.size() || idx == excluir) {
             System.out.printf("\n===== SELECCIONAR CIUDAD DE %s =====\n", tipo.toUpperCase());
             for (int i = 0; i < ciudades.size(); i++) {
-                if (i == excluir) continue;
+                if (i == excluir) {
+                    continue;
+                }
                 System.out.printf("%d. %s - %s\n", i + 1, ciudades.get(i).getCodigoCiudad(), ciudades.get(i).getNombreCiudad());
             }
             System.out.printf("Elija ciudad de %s: ", tipo);
